@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
 
 function App() {
-  const [message, setMessage] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/hello")
       .then((res) => res.json())
       .then((data) => {
-        setMessage(data.message);
+        setResponse(data.message);
       });
   }, []);
 
-  return <p>{message}</p>
+  return <p>{response}</p>
 
 }
 
