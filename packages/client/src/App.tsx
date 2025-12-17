@@ -11,7 +11,7 @@ function App() {
       });
   }, []);
 
-  return <p>{response}</p>
+  return <p className='font-bold p-4 text-3xl'>{response}</p>
 
 }
 
