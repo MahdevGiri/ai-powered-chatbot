@@ -1,4 +1,4 @@
-import concurrently from "concurrently";
+import { concurrently } from "concurrently";
 
 concurrently([
     {
@@ -13,4 +13,4 @@ concurrently([
         cwd: "packages/client",
         prefixColor: "green"
     }
-])
+]);

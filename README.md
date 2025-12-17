@@ -1,4 +1,4 @@
-# my-app
+# ai-powered-app
 
 To install dependencies:
 

@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "ai-powered-app",
   "module": "index.ts",
   "type": "module",
   "private": true,
