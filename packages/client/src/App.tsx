@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Button } from "./components/ui/button";
 
 function App() {
   const [response, setResponse] = useState<string>("");
@@ -11,7 +12,12 @@ function App() {
       });
   }, []);
 
-  return <p className='font-bold p-4 text-3xl'>{response}</p>
+  return (
+    <div className="p-4">
+      <p className='font-bold text-3xl'>{response}</p>
+      <Button>Click Me</Button>
+    </div>
+  );
 
 }
 
