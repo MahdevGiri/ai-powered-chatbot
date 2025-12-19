@@ -44,21 +44,25 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       return res.status(400).json({ errors: parseResult.error.format() });
    }
 
-   //const prompt = req.body.prompt;
-   //const conversationId = req.body.conversationId;
-   const { prompt, conversationId } = req.body;
+   try {
+      //const prompt = req.body.prompt;
+      //const conversationId = req.body.conversationId;
+      const { prompt, conversationId } = req.body;
 
-   const response = await client.responses.create({
-      model: 'gpt-4o-mini',
-      input: prompt,
-      //temperature: 0.2,
-      max_output_tokens: 150,
-      previous_response_id: conversations.get(conversationId),
-   });
+      const response = await client.responses.create({
+         model: 'gpt-4o-mini',
+         input: prompt,
+         //temperature: 0.2,
+         max_output_tokens: 150,
+         previous_response_id: conversations.get(conversationId),
+      });
 
-   conversations.set(conversationId, response.id);
+      conversations.set(conversationId, response.id);
 
-   res.json({ message: response.output_text }); // output_text is the field that contains the generated text for openai responses
+      res.json({ message: response.output_text }); // output_text is the field that contains the generated text for openai responses
+   } catch (error) {
+      res.status(500).json({ error: 'Failed to generate a response.' });
+   }
 });
 
 app.listen(port, () => {
