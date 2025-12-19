@@ -2,7 +2,8 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
-import z from 'zod';
+import z, { set } from 'zod';
+import { conversationRepository } from './repositories/converstaion.respository';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -23,9 +24,6 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/api/hello', (req: Request, res: Response) => {
    res.json({ message: 'Hello from the API!' });
 });
-
-// conversationId => lastResponseId
-const conversations = new Map<string, string>();
 
 const chatSchema = z.object({
    prompt: z
@@ -54,10 +52,11 @@ app.post('/api/chat', async (req: Request, res: Response) => {
          input: prompt,
          //temperature: 0.2,
          max_output_tokens: 150,
-         previous_response_id: conversations.get(conversationId),
+         previous_response_id:
+            conversationRepository.getLastResponseId(conversationId),
       });
 
-      conversations.set(conversationId, response.id);
+      conversationRepository.setLastResponseId(conversationId, response.id);
 
       res.json({ message: response.output_text }); // output_text is the field that contains the generated text for openai responses
    } catch (error) {
