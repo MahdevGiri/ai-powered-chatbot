@@ -1,4 +1,4 @@
-# ai-powered-app
+# ai-powered-chatbot
 
 To install dependencies:
 

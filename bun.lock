@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "ai-powered-app",
+      "name": "ai-powered-chatbot",
       "devDependencies": {
         "@types/bun": "latest",
         "concurrently": "^9.2.1",

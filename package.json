@@ -1,5 +1,5 @@
 {
-   "name": "ai-powered-app",
+   "name": "ai-powered-chatbot",
    "module": "index.ts",
    "type": "module",
    "private": true,
