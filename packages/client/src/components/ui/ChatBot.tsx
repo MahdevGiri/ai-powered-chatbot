@@ -1,17 +1,26 @@
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import { Button } from './button';
 import { FaArrowUp } from 'react-icons/fa';
+import { useRef } from 'react';
 
 type FormData = {
-   prompt: string;
+   promptInput: string;
 };
 
 const ChatBot = () => {
+   const guidConversationId = useRef(crypto.randomUUID()); // create a ref to hold a unique conversation ID (could have use stateHook if needed to change it later)
    const { register, handleSubmit, reset, formState } = useForm<FormData>(); // destructure the useForm hook to get register, handleSubmit, reset, and formState objects
 
-   const onSubmitCustom = (data: FormData) => {
-      console.log(data); // log the form data on submit
+   const onSubmitCustom = async (data: FormData) => {
       reset(); // reset the form after submission
+
+      const response = await axios.post('/api/chat', {
+         prompt: data.promptInput,
+         conversationId: guidConversationId.current,
+      }); // send a POST request to the /api/chat endpoint with the form data
+
+      console.log('Form submitted:', response.data);
    };
 
    const onKeyDownCustom = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -28,7 +37,7 @@ const ChatBot = () => {
          className="flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
       >
          <textarea
-            {...register('prompt', {
+            {...register('promptInput', {
                // spread the  register object to get all the props(properties) like onChange, onBlur, maxLength, & more
                required: true,
                validate: (value) => value.trim().length > 0,
