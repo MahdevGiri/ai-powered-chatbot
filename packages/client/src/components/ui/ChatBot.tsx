@@ -1,6 +1,6 @@
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { Button } from './button';
 import { FaArrowUp } from 'react-icons/fa';
 import { useRef, useState } from 'react';
@@ -20,6 +20,7 @@ type Message = {
 
 const ChatBot = () => {
    const [messages, setMessages] = useState<Message[]>([]); // state to hold chat messages
+   const [isBotTyping, setIsBotTyping] = useState(false); // state to indicate if the bot is typing
    const guidConversationId = useRef(crypto.randomUUID()); // create a ref hook to hold a unique conversation ID (didn't use state hook becoz we don't want it to re-generate on every render)
    const { register, handleSubmit, reset, formState } = useForm<FormData>(); // destructure the useForm hook to get register, handleSubmit, reset, and formState objects
 
@@ -28,6 +29,8 @@ const ChatBot = () => {
          ...prev,
          { content: data.promptInput, role: 'user' },
       ]); // update messages state with the user input
+
+      setIsBotTyping(true); // set bot typing state to true
 
       reset(); // reset the form input field
 
@@ -40,6 +43,8 @@ const ChatBot = () => {
          ...prev,
          { content: response.data.message, role: 'bot' },
       ]); // update messages state with the response from the server
+
+      setIsBotTyping(false); // set bot typing state to false
    };
 
    const onKeyDownCustom = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -64,6 +69,13 @@ const ChatBot = () => {
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                </p>
             ))}
+            {isBotTyping && (
+               <div className="flex self-start gap-1 px-3 py-3 bg-gray-200 rounded-xl">
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]"></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]"></div>
+               </div>
+            )}
          </div>
          <form
             onSubmit={handleSubmit(onSubmitCustom)} // handleSubmit() returns a function that React will invoke on form submission with validated data
