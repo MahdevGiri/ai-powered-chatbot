@@ -12,13 +12,21 @@ type ChatResponse = {
    message: string;
 };
 
+type Message = {
+   content: string;
+   role: 'user' | 'bot';
+};
+
 const ChatBot = () => {
-   const [messages, setMessages] = useState<string[]>([]); // state hook to hold chat messages
+   const [messages, setMessages] = useState<Message[]>([]); // state to hold chat messages
    const guidConversationId = useRef(crypto.randomUUID()); // create a ref hook to hold a unique conversation ID (didn't use state hook becoz we don't want it to re-generate on every render)
    const { register, handleSubmit, reset, formState } = useForm<FormData>(); // destructure the useForm hook to get register, handleSubmit, reset, and formState objects
 
    const onSubmitCustom = async (data: FormData) => {
-      setMessages((prev) => [...prev, data.promptInput]); // add the user's prompt to the messages state
+      setMessages((prev) => [
+         ...prev,
+         { content: data.promptInput, role: 'user' },
+      ]); // update messages state with the user input
 
       reset(); // reset the form input field
 
@@ -27,7 +35,10 @@ const ChatBot = () => {
          conversationId: guidConversationId.current,
       }); // send a POST request to the /api/chat endpoint with the form data
 
-      setMessages((prev) => [...prev, response.data.message]); // update messages state with the response from the server
+      setMessages((prev) => [
+         ...prev,
+         { content: response.data.message, role: 'bot' },
+      ]); // update messages state with the response from the server
    };
 
    const onKeyDownCustom = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -39,9 +50,18 @@ const ChatBot = () => {
 
    return (
       <div>
-         <div>
+         <div className="flex flex-col gap-2 mb-10">
             {messages.map((message, index) => (
-               <p key={index}>{message}</p>
+               <p
+                  key={index}
+                  className={`px-3 py-1 rounded-xl ${
+                     message.role === 'user'
+                        ? 'bg-blue-600 text-white self-end'
+                        : 'bg-gray-100 text-black self-start'
+                  }`}
+               >
+                  {message.content}
+               </p>
             ))}
          </div>
          <form
