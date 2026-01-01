@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { set, useForm } from 'react-hook-form';
 import { Button } from './button';
 import { FaArrowUp } from 'react-icons/fa';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type FormData = {
    promptInput: string;
@@ -21,8 +21,14 @@ type Message = {
 const ChatBot = () => {
    const [messages, setMessages] = useState<Message[]>([]); // state to hold chat messages
    const [isBotTyping, setIsBotTyping] = useState(false); // state to indicate if the bot is typing
+   const formRef = useRef<HTMLFormElement | null>(null); // create a ref hook to reference the form element
    const guidConversationId = useRef(crypto.randomUUID()); // create a ref hook to hold a unique conversation ID (didn't use state hook becoz we don't want it to re-generate on every render)
    const { register, handleSubmit, reset, formState } = useForm<FormData>(); // destructure the useForm hook to get register, handleSubmit, reset, and formState objects
+
+   useEffect(() => {
+      // scroll to bottom of chat messages when a new message is added to messages array
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+   }, [messages]);
 
    const onSubmitCustom = async (data: FormData) => {
       setMessages((prev) => [
@@ -80,6 +86,7 @@ const ChatBot = () => {
          <form
             onSubmit={handleSubmit(onSubmitCustom)} // handleSubmit() returns a function that React will invoke on form submission with validated data
             onKeyDown={onKeyDownCustom}
+            ref={formRef}
             className="flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
          >
             <textarea
